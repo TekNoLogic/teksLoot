@@ -1,0 +1,10 @@
+## Interface: 20100
+
+## Title: teksLoot
+## Notes: Minimalistic group roll frames.
+## X-Credits: Xuerian's XLootGroup
+## X-Category: Interface Enhancements
+
+## SavedVariables: teksLootDB
+
+teksLoot.lua

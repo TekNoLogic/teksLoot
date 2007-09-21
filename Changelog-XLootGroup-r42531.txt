@@ -1,0 +1,14 @@
+------------------------------------------------------------------------
+r42531 | xuerian | 2007-07-02 14:27:12 -0400 (Mon, 02 Jul 2007) | 1 line
+Changed paths:
+   M /trunk/XLootGroup/XLootGroup.toc
+   A /trunk/XLootGroup/localization.deDE.lua
+
+XLootGroup: Adding full German translation (Thanks to Omicron)
+------------------------------------------------------------------------
+r38511 | xuerian | 2007-06-04 22:56:36 -0400 (Mon, 04 Jun 2007) | 1 line
+Changed paths:
+   M /trunk/XLootGroup/XLootGroup.lua
+
+XLootGroup: Various code cleanups I forgot to commit a while back.
+------------------------------------------------------------------------

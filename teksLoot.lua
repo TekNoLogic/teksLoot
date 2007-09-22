@@ -46,29 +46,12 @@ end
 
 
 local function OnEvent(frame, event, rollid)
-	if self.rollid ~= rollid then return end
+	if frame.rollid ~= rollid then return end
 
-	self.rollid = nil
-	self.time = nil
-	self:Hide()
+	frame.rollid = nil
+	frame.time = nil
+	frame:Hide()
 end
-
-
---~ local function GetLootRollItemInfo(rollid)
---~ 	local name, link, quality, _, _, _, _, _, _, texture = GetItemInfo(rollid == 1 and 25657 or rollid == 2 and 27460 or 31001)
---~ 	return texture, name, 1, quality, rollid ~= 1
---~ end
-
-
---~ local function GetLootRollItemLink(rollid)
---~ 	local name, link, quality, _, _, _, _, _, _, texture = GetItemInfo(rollid == 1 and 25657 or rollid == 2 and 27460 or 31001)
---~ 	return link
---~ end
-
-
---~ local function GetLootRollTimeLeft(rollid)
---~ 	return 10-(GetTime() % 10)
---~ end
 
 
 local function StatusUpdate(frame)
@@ -211,6 +194,9 @@ anchor:SetScript("OnEvent", function(frame, event, addon)
 
 	anchor:UnregisterEvent("ADDON_LOADED")
 	anchor:RegisterEvent("START_LOOT_ROLL")
+	UIParent:UnregisterEvent("START_LOOT_ROLL")
+	UIParent:UnregisterEvent("CANCEL_LOOT_ROLL")
+
 	anchor:SetScript("OnEvent", function(frame, event, rollid, time)
 		local f = GetFrame()
 		f.rollid = rollid
@@ -241,16 +227,9 @@ anchor:SetScript("OnEvent", function(frame, event, addon)
 	if not teksLootDB then teksLootDB = {} end
 	anchor.db = teksLootDB
 	anchor:SetPoint("CENTER", UIParent, anchor.db.x and "BOTTOMLEFT" or "BOTTOM", anchor.db.x or 0, anchor.db.y or 221)
-
---~ 	local e = anchor:GetScript("OnEvent")
---~ 	e(anchor, "START_LOOT_ROLL", 1, 10)
---~ 	e(anchor, "START_LOOT_ROLL", 2, 10)
---~ 	e(anchor, "START_LOOT_ROLL", 3, 10)
---~ 	e(anchor, "START_LOOT_ROLL", 4, 10)
 end)
 
 
 SlashCmdList["TEKSLOOT"] = function() if anchor:IsVisible() then anchor:Hide() else anchor:Show() end end
 SLASH_TEKSLOOT1 = "/teksloot"
-
 

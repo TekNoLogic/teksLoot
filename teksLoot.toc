@@ -1,4 +1,4 @@
-## Interface: 20300
+## Interface: 20302
 
 ## Title: teksLoot
 ## Notes: Minimalistic group roll frames.

@@ -2,7 +2,11 @@
 
 ## Title: teksLoot
 ## Notes: Minimalistic group roll frames.
+## Author: Tekkub Stoutwrithe
+## Version: Alpha
 ## X-Credits: Xuerian's XLootGroup
+## X-Website: http://www.tekkub.net/
+## X-Email: tekkub-wow@googlegroups.com
 ## X-Category: Interface Enhancements
 
 ## SavedVariables: teksLootDB

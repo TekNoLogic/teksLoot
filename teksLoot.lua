@@ -17,9 +17,11 @@ local function HideTip() GameTooltip:Hide() end
 local function HideTip2() GameTooltip:Hide(); ResetCursor() end
 
 
+local rolltypes = {"need", "greed", [0] = "pass"}
 local function SetTip(frame)
 	GameTooltip:SetOwner(frame, "ANCHOR_RIGHT")
 	GameTooltip:SetText(frame.tiptext)
+	for name,roll in pairs(frame.parent.rolls) do if roll == rolltypes[frame.rolltype] then GameTooltip:AddLine(name, 1, 1, 1) end end
 	GameTooltip:Show()
 end
 
@@ -76,7 +78,9 @@ local function CreateRollButton(parent, ntex, ptex, htex, rolltype, tiptext, ...
 	f:SetScript("OnEnter", SetTip)
 	f:SetScript("OnLeave", HideTip)
 	f:SetScript("OnClick", ClickRoll)
-	return f
+	local txt = f:CreateFontString(nil, nil, "GameFontHighlightSmallOutline")
+	txt:SetPoint("CENTER", 0, rolltype == 2 and 1 or rolltype == 0 and -1.2 or 0)
+	return f, txt
 end
 
 
@@ -135,9 +139,10 @@ local function CreateRollFrame()
 	spark:SetBlendMode("ADD")
 	status.spark = spark
 
-	local need = CreateRollButton(frame, "Interface\\Buttons\\UI-GroupLoot-Dice-Up", "Interface\\Buttons\\UI-GroupLoot-Dice-Highlight", "Interface\\Buttons\\UI-GroupLoot-Dice-Down", 1, NEED, "LEFT", frame.button, "RIGHT", 5, -1)
-	local greed = CreateRollButton(frame, "Interface\\Buttons\\UI-GroupLoot-Coin-Up", "Interface\\Buttons\\UI-GroupLoot-Coin-Highlight", "Interface\\Buttons\\UI-GroupLoot-Coin-Down", 2, GREED, "LEFT", need, "RIGHT", 0, -1)
-	local pass = CreateRollButton(frame, "Interface\\Buttons\\UI-GroupLoot-Pass-Up", nil, "Interface\\Buttons\\UI-GroupLoot-Pass-Down", 0, PASS, "LEFT", greed, "RIGHT", 0, 2.2)
+	local need, needtext = CreateRollButton(frame, "Interface\\Buttons\\UI-GroupLoot-Dice-Up", "Interface\\Buttons\\UI-GroupLoot-Dice-Highlight", "Interface\\Buttons\\UI-GroupLoot-Dice-Down", 1, NEED, "LEFT", frame.button, "RIGHT", 5, -1)
+	local greed, greedtext = CreateRollButton(frame, "Interface\\Buttons\\UI-GroupLoot-Coin-Up", "Interface\\Buttons\\UI-GroupLoot-Coin-Highlight", "Interface\\Buttons\\UI-GroupLoot-Coin-Down", 2, GREED, "LEFT", need, "RIGHT", 0, -1)
+	local pass, passtext = CreateRollButton(frame, "Interface\\Buttons\\UI-GroupLoot-Pass-Up", nil, "Interface\\Buttons\\UI-GroupLoot-Pass-Down", 0, PASS, "LEFT", greed, "RIGHT", 0, 2.2)
+	frame.need, frame.greed, frame.pass = needtext, greedtext, passtext
 
 	local bind = frame:CreateFontString()
 	bind:SetPoint("LEFT", pass, "RIGHT", 3, 1)
@@ -150,6 +155,8 @@ local function CreateRollFrame()
 	loot:SetHeight(16)
 	loot:SetJustifyH("LEFT")
 	frame.fsloot = loot
+
+	frame.rolls = {}
 
 	return frame
 end
@@ -188,41 +195,78 @@ local function GetFrame()
 end
 
 
+local function START_LOOT_ROLL(rollid, time)
+	local f = GetFrame()
+	f.rollid = rollid
+	f.time = time
+	for i in pairs(f.rolls) do f.rolls[i] = nil end
+	f.need:SetText(0)
+	f.greed:SetText(0)
+	f.pass:SetText(0)
+
+	local texture, name, count, quality, bop = GetLootRollItemInfo(rollid)
+	f.button:SetNormalTexture(texture)
+	f.button.link = GetLootRollItemLink(rollid)
+
+	f.fsbind:SetText(bop and "BoP" or "BoE")
+	f.fsbind:SetVertexColor(bop and 1 or .3, bop and .3 or 1, bop and .1 or .3)
+
+	local color = ITEM_QUALITY_COLORS[quality]
+	f.fsloot:SetVertexColor(color.r, color.g, color.b)
+	f.fsloot:SetText(name)
+
+	f:SetBackdropBorderColor(color.r, color.g, color.b, 1)
+	f.buttonborder:SetBackdropBorderColor(color.r, color.g, color.b, 1)
+	f.status:SetStatusBarColor(color.r, color.g, color.b, .7)
+
+	f.status:SetMinMaxValues(0, time)
+	f.status:SetValue(time)
+
+	f:SetPoint("CENTER", WorldFrame, "CENTER")
+	f:Show()
+end
+
+
+local rollpairs = {
+--~ 	["(.*) passed on: (.+)( because .* cannot use that item)?"]  = "pass",
+	["(.*) passed on: (.+|r)"]  = "pass",
+	["(.*) has selected Greed for: (.+)"] = "greed",
+	["(.*) has selected Need for: (.+)"]  = "need",
+}
+local function ParseRollChoice(msg)
+	for i,v in pairs(rollpairs) do
+		local _, _, playername, itemname = string.find(msg, i)
+		if playername and itemname and playername ~= "Everyone" then return playername, itemname, v end
+	end
+end
+
+
+local function CHAT_MSG_LOOT(msg)
+	local playername, itemname, rolltype = ParseRollChoice(msg)
+	if playername and itemname and rolltype then
+		for _,f in ipairs(frames) do
+			if f.rollid and f.button.link == itemname and not f.rolls[playername] then
+				f.rolls[playername] = rolltype
+				f[rolltype]:SetText(tonumber(f[rolltype]:GetText()) + 1)
+				return
+			end
+		end
+	end
+end
+
+
 anchor:RegisterEvent("ADDON_LOADED")
 anchor:SetScript("OnEvent", function(frame, event, addon)
 	if addon ~= "teksLoot" then return end
 
 	anchor:UnregisterEvent("ADDON_LOADED")
 	anchor:RegisterEvent("START_LOOT_ROLL")
+	anchor:RegisterEvent("CHAT_MSG_LOOT")
 	UIParent:UnregisterEvent("START_LOOT_ROLL")
 	UIParent:UnregisterEvent("CANCEL_LOOT_ROLL")
 
-	anchor:SetScript("OnEvent", function(frame, event, rollid, time)
-		local f = GetFrame()
-		f.rollid = rollid
-		f.time = time
+	anchor:SetScript("OnEvent", function(frame, event, ...) if event == "CHAT_MSG_LOOT" then return CHAT_MSG_LOOT(...) else return START_LOOT_ROLL(...) end end)
 
-		local texture, name, count, quality, bop = GetLootRollItemInfo(rollid)
-		f.button:SetNormalTexture(texture)
-		f.button.link = GetLootRollItemLink(rollid)
-
-		f.fsbind:SetText(bop and "BoP" or "BoE")
-		f.fsbind:SetVertexColor(bop and 1 or .3, bop and .3 or 1, bop and .1 or .3)
-
-		local color = ITEM_QUALITY_COLORS[quality]
-		f.fsloot:SetVertexColor(color.r, color.g, color.b)
-		f.fsloot:SetText(name)
-
-		f:SetBackdropBorderColor(color.r, color.g, color.b, 1)
-		f.buttonborder:SetBackdropBorderColor(color.r, color.g, color.b, 1)
-		f.status:SetStatusBarColor(color.r, color.g, color.b, .7)
-
-		f.status:SetMinMaxValues(0, time)
-		f.status:SetValue(time)
-
-		f:SetPoint("CENTER", WorldFrame, "CENTER")
-		f:Show()
-	end)
 
 	if not teksLootDB then teksLootDB = {} end
 	anchor.db = teksLootDB

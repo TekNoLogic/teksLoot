@@ -228,8 +228,8 @@ end
 
 
 local rollpairs = {
-	["^(%S*) automatically passed on: (.+) because s?he cannot loot that item.$"]  = "pass",
-	["^(%S*) passed on: (.+)$"]  = "pass",
+	["^(.*) automatically passed on: (.+) because s?he cannot loot that item.$"] = "pass",
+	["^(.*) passed on: (.+|r)$"]  = "pass",
 	["(.*) has selected Greed for: (.+)"] = "greed",
 	["(.*) has selected Need for: (.+)"]  = "need",
 }

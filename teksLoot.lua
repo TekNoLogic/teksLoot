@@ -34,9 +34,9 @@ local function SetItemTip(frame)
 end
 
 
-local function ItemOnUpdate()
+local function ItemOnUpdate(self)
 	if IsShiftKeyDown() then GameTooltip_ShowCompareItem() end
-	CursorOnUpdate()
+	CursorOnUpdate(self)
 end
 
 

@@ -8,7 +8,6 @@ local backdrop = {
 
 
 local function ClickRoll(frame)
-	frame.clicked = which
 	RollOnLoot(frame.parent.rollid, frame.rolltype)
 end
 

@@ -1,0 +1,2 @@
+3.0.1.3-Beta
+    Fix OnUpdate error in Wrath

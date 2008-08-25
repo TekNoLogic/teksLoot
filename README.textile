@@ -1,0 +1,9 @@
+teksLoot is a rewrite of "XLoot Group":http://www.wowinterface.com/downloads/info6349-XLoot_Group.html  Why did I rewrite it?  Well, every so often I make the mistake of reading someone's code and get an obsessive compulsive urge to clean up their mess... this was one of those times... Basically it's the frame design of XLoot Group, with all the rest stripped out and rewritten.
+
+So what does the blasted thing do? It gives you super tiny loot-roll frames! Nothing complicated, install and go. Only command is @/teksloot@, which toggles the anchor so you can move the frames around.
+
+h2. Links
+
+<b>Visit "my site":http://www.tekkub.net/addons/teksLoot for more info.<br>
+Please report all bugs and feature requests to my "Google Code":http://code.google.com/p/tekkub-wow/issues/list?can=1&q=addon:teksLoot&sort=status+milestone&colspec=ID%20Type%20Status%20Addon%20Milestone%20Summary tracker<br>
+Please direct all feedback and questions to my "Google Groups":http://groups-beta.google.com/group/tekkub-wow mailinglist.</b>

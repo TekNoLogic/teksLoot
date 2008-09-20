@@ -226,7 +226,12 @@ local function START_LOOT_ROLL(rollid, time)
 end
 
 
-local rollpairs = {
+local rollpairs = GetLocale() == "frFR" and {
+	["(.*) a pass\195\169 pour\194\160: (.+) parce qu'((il)|(elle)) ne peut pas ramasser cette objet.$"]  = "pass",
+	["(.*) a pass\195\169 pour\194\160: (.+)"]  = "pass",
+	["(.*) a choisi Cupidit\195\169 pour\194\160: (.+)"] = "greed",
+	["(.*) a choisi Besoin pour\194\160: (.+)"]  = "need",
+} or {
 	["^(.*) automatically passed on: (.+) because s?he cannot loot that item.$"] = "pass",
 	["^(.*) passed on: (.+|r)$"]  = "pass",
 	["(.*) has selected Greed for: (.+)"] = "greed",

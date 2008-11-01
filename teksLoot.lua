@@ -226,7 +226,13 @@ local function START_LOOT_ROLL(rollid, time)
 end
 
 
-local rollpairs = GetLocale() == "frFR" and {
+local locale = GetLocale()
+local rollpairs = locale == "deDE" and {
+	["(.*) passt automatisch bei (.+), weil er den Gegenstand nicht benutzen kann.$"]  = "pass",
+	["(.*) w\195\188rfelt nicht f\195\188r: (.+|r)$"] = "pass",
+	["(.*) hat f\195\188r (.+) 'Gier' ausgew\195\164hlt"] = "greed",
+	["(.*) hat f\195\188r (.+) 'Bedarf' ausgew\195\164hlt"] = "need",
+} or locale == "frFR" and {
 	["(.*) a pass\195\169 pour\194\160: (.+) parce qu'((il)|(elle)) ne peut pas ramasser cette objet.$"]  = "pass",
 	["(.*) a pass\195\169 pour\194\160: (.+)"]  = "pass",
 	["(.*) a choisi Cupidit\195\169 pour\194\160: (.+)"] = "greed",

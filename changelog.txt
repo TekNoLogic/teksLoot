@@ -1,3 +1,6 @@
+3.0.2.5-Beta
+    deDE locale
+
 3.0.1.4-Beta
     SAY IT FRENCHIE!  SAY CHOWDAH!
 

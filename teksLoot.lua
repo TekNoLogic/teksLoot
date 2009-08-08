@@ -46,7 +46,9 @@ local function LootClick(frame)
 end
 
 
+local cancelled_rolls = {}
 local function OnEvent(frame, event, rollid)
+	cancelled_rolls[rollid] = true
 	if frame.rollid ~= rollid then return end
 
 	frame.rollid = nil
@@ -91,6 +93,7 @@ local function CreateRollFrame()
 	frame:SetBackdropColor(0, 0, 0, .9)
 	frame:SetScript("OnEvent", OnEvent)
 	frame:RegisterEvent("CANCEL_LOOT_ROLL")
+	frame:Hide()
 
 	local button = CreateFrame("Button", nil, frame)
 	button:SetPoint("LEFT", 5, 0)
@@ -182,19 +185,22 @@ anchor:RegisterForClicks("RightButtonUp")
 anchor:Hide()
 
 local frames = {}
+for i=1,3 do
+	local f = CreateRollFrame()
+	f:SetPoint("TOPLEFT", next(frames) and frames[#frames] or anchor, "BOTTOMLEFT", 0, -4)
+	table.insert(frames, f)
+end
+
 local function GetFrame()
 	for i,f in ipairs(frames) do
 		if not f.rollid then return f end
 	end
-
-	local f = CreateRollFrame()
-	f:SetPoint("TOPLEFT", next(frames) and frames[#frames] or anchor, "BOTTOMLEFT", 0, -4)
-	table.insert(frames, f)
-	return f
 end
 
 
 local function START_LOOT_ROLL(rollid, time)
+	if cancelled_rolls[rollid] then return end
+
 	local f = GetFrame()
 	f.rollid = rollid
 	f.time = time

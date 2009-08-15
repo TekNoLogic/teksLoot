@@ -30,7 +30,7 @@ local function SetItemTip(frame)
 	GameTooltip:SetOwner(frame, "ANCHOR_TOPLEFT")
 	GameTooltip:SetHyperlink(frame.link)
 	if IsShiftKeyDown() then GameTooltip_ShowCompareItem() end
-	CursorUpdate()
+	if IsModifiedClick("DRESSUP") then ShowInspectCursor() else ResetCursor() end
 end
 
 

@@ -185,16 +185,15 @@ anchor:RegisterForClicks("RightButtonUp")
 anchor:Hide()
 
 local frames = {}
-for i=1,3 do
-	local f = CreateRollFrame()
-	f:SetPoint("TOPLEFT", next(frames) and frames[#frames] or anchor, "BOTTOMLEFT", 0, -4)
-	table.insert(frames, f)
-end
-
 local function GetFrame()
 	for i,f in ipairs(frames) do
 		if not f.rollid then return f end
 	end
+
+	local f = CreateRollFrame()
+	f:SetPoint("TOPLEFT", next(frames) and frames[#frames] or anchor, "BOTTOMLEFT", 0, -4)
+	table.insert(frames, f)
+	return f
 end
 
 

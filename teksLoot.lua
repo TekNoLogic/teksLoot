@@ -1,4 +1,5 @@
 
+local THREETHREE = select(4, GetBuildInfo()) >= 30300
 
 local backdrop = {
 	bgFile = "Interface\\ChatFrame\\ChatFrameBackground", tile = true, tileSize = 16,
@@ -20,6 +21,7 @@ local rolltypes = {"need", "greed", "disenchant", [0] = "pass"}
 local function SetTip(frame)
 	GameTooltip:SetOwner(frame, "ANCHOR_RIGHT")
 	GameTooltip:SetText(frame.tiptext)
+	if frame:Disabled() then GameTooltip:AddLine("|cffff3333Cannot roll") end
 	for name,roll in pairs(frame.parent.rolls) do if roll == rolltypes[frame.rolltype] then GameTooltip:AddLine(name, 1, 1, 1) end end
 	GameTooltip:Show()
 end
@@ -79,6 +81,7 @@ local function CreateRollButton(parent, ntex, ptex, htex, rolltype, tiptext, ...
 	f:SetScript("OnEnter", SetTip)
 	f:SetScript("OnLeave", HideTip)
 	f:SetScript("OnClick", ClickRoll)
+	if THREETHREE then f:SetMotionScriptsWhileDisabled(true) end
 	local txt = f:CreateFontString(nil, nil, "GameFontHighlightSmallOutline")
 	txt:SetPoint("CENTER", 0, rolltype == 2 and 1 or rolltype == 0 and -1.2 or 0)
 	return f, txt
@@ -87,7 +90,7 @@ end
 
 local function CreateRollFrame()
 	local frame = CreateFrame("Frame", nil, UIParent)
-	frame:SetWidth(328)
+	frame:SetWidth(THREETHREE and 328 or 300)
 	frame:SetHeight(26)
 	frame:SetBackdrop(backdrop)
 	frame:SetBackdropColor(0, 0, 0, .9)
@@ -143,8 +146,9 @@ local function CreateRollFrame()
 
 	local need, needtext = CreateRollButton(frame, "Interface\\Buttons\\UI-GroupLoot-Dice-Up", "Interface\\Buttons\\UI-GroupLoot-Dice-Highlight", "Interface\\Buttons\\UI-GroupLoot-Dice-Down", 1, NEED, "LEFT", frame.button, "RIGHT", 5, -1)
 	local greed, greedtext = CreateRollButton(frame, "Interface\\Buttons\\UI-GroupLoot-Coin-Up", "Interface\\Buttons\\UI-GroupLoot-Coin-Highlight", "Interface\\Buttons\\UI-GroupLoot-Coin-Down", 2, GREED, "LEFT", need, "RIGHT", 0, -1)
-	local de, detext = CreateRollButton(frame, "Interface\\Buttons\\UI-GroupLoot-DE-Down", "Interface\\Buttons\\UI-GroupLoot-DE-Highlight", "Interface\\Buttons\\UI-GroupLoot-DE-Down", 3, ROLL_DISENCHANT, "LEFT", greed, "RIGHT", 0, -1)
-	local pass, passtext = CreateRollButton(frame, "Interface\\Buttons\\UI-GroupLoot-Pass-Up", nil, "Interface\\Buttons\\UI-GroupLoot-Pass-Down", 0, PASS, "LEFT", de, "RIGHT", 0, 2.2)
+	local de, detext
+	if THREETHREE then de, detext = CreateRollButton(frame, "Interface\\Buttons\\UI-GroupLoot-DE-Down", "Interface\\Buttons\\UI-GroupLoot-DE-Highlight", "Interface\\Buttons\\UI-GroupLoot-DE-Down", 3, ROLL_DISENCHANT, "LEFT", greed, "RIGHT", 0, -1) end
+	local pass, passtext = CreateRollButton(frame, "Interface\\Buttons\\UI-GroupLoot-Pass-Up", nil, "Interface\\Buttons\\UI-GroupLoot-Pass-Down", 0, PASS, "LEFT", de or greed, "RIGHT", 0, 2.2)
 	frame.needbutt, frame.greedbutt, frame.disenchantbutt = need, greed, de
 	frame.need, frame.greed, frame.pass, frame.disenchant = needtext, greedtext, passtext, detext
 
@@ -220,12 +224,14 @@ local function START_LOOT_ROLL(rollid, time)
 	f.button:SetNormalTexture(texture)
 	f.button.link = GetLootRollItemLink(rollid)
 
-	if canNeed then f.needbutt:Enable() else f.needbutt:Disable() end
-	if canGreed then f.greedbutt:Enable() else f.greedbutt:Disable() end
-	if canDisenchant then f.disenchantbutt:Enable() else f.disenchantbutt:Disable() end
-	SetDesaturation(f.needbutt:GetNormalTexture(), not canNeed)
-	SetDesaturation(f.greedbutt:GetNormalTexture(), not canGreed)
-	SetDesaturation(f.disenchantbutt:GetNormalTexture(), not canDisenchant)
+	if THREETHREE then
+		if canNeed then f.needbutt:Enable() else f.needbutt:Disable() end
+		if canGreed then f.greedbutt:Enable() else f.greedbutt:Disable() end
+		if canDisenchant then f.disenchantbutt:Enable() else f.disenchantbutt:Disable() end
+		SetDesaturation(f.needbutt:GetNormalTexture(), not canNeed)
+		SetDesaturation(f.greedbutt:GetNormalTexture(), not canGreed)
+		SetDesaturation(f.disenchantbutt:GetNormalTexture(), not canDisenchant)
+	end
 
 
 	f.fsbind:SetText(bop and "BoP" or "BoE")

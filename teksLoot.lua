@@ -21,7 +21,7 @@ local rolltypes = {"need", "greed", "disenchant", [0] = "pass"}
 local function SetTip(frame)
 	GameTooltip:SetOwner(frame, "ANCHOR_RIGHT")
 	GameTooltip:SetText(frame.tiptext)
-	if frame:Disabled() then GameTooltip:AddLine("|cffff3333Cannot roll") end
+	if frame:IsEnabled() == 0 then GameTooltip:AddLine("|cffff3333Cannot roll") end
 	for name,roll in pairs(frame.parent.rolls) do if roll == rolltypes[frame.rolltype] then GameTooltip:AddLine(name, 1, 1, 1) end end
 	GameTooltip:Show()
 end

@@ -59,6 +59,24 @@ local function OnEvent(frame, event, rollid)
 end
 
 
+local function GetLootRollItemInfo(rollid)
+	local name, link, quality, _, _, _, _, _, _, texture = GetItemInfo(rollid == 1 and 25657 or rollid == 2 and 5656 or 31001)
+	return texture, name, 1, quality, rollid ~= 1, rollid == 1, true, rollid == 2
+end
+
+
+local function GetLootRollItemLink(rollid)
+	local name, link, quality, _, _, _, _, _, _, texture = GetItemInfo(rollid == 1 and 25657 or rollid == 2 and 5656 or 31001)
+	return link
+end
+
+
+local function GetLootRollTimeLeft(rollid)
+	return 10-(GetTime() % 10)
+end
+
+
+
 local function StatusUpdate(frame)
 	local t = GetLootRollTimeLeft(frame.parent.rollid)
 	local perc = t / frame.parent.time
@@ -314,6 +332,21 @@ anchor:SetScript("OnEvent", function(frame, event, addon)
 	if not teksLootDB then teksLootDB = {} end
 	anchor.db = teksLootDB
 	anchor:SetPoint("CENTER", UIParent, anchor.db.x and "BOTTOMLEFT" or "BOTTOM", anchor.db.x or 0, anchor.db.y or 221)
+
+	local e = anchor:GetScript("OnEvent")
+	e(anchor, "START_LOOT_ROLL", 1, 10)
+	e(anchor, "START_LOOT_ROLL", 2, 10)
+	e(anchor, "START_LOOT_ROLL", 3, 10)
+	e(anchor, "START_LOOT_ROLL", 4, 10)
+	e(anchor, "CHAT_MSG_LOOT", "Bob has selected Greed for: "..GetLootRollItemLink(1))
+	e(anchor, "CHAT_MSG_LOOT", "Joe has selected Need for: "..GetLootRollItemLink(1))
+	e(anchor, "CHAT_MSG_LOOT", "Mary has selected Greed for: "..GetLootRollItemLink(1))
+	e(anchor, "CHAT_MSG_LOOT", "Jane passed on: "..GetLootRollItemLink(1))
+	e(anchor, "CHAT_MSG_LOOT", "Bob has selected Greed for: "..GetLootRollItemLink(2))
+	e(anchor, "CHAT_MSG_LOOT", "Joe has selected Need for: "..GetLootRollItemLink(2))
+	e(anchor, "CHAT_MSG_LOOT", "Mary has selected Disenchant for: "..GetLootRollItemLink(2))
+	e(anchor, "CHAT_MSG_LOOT", "Bob has selected Need for: "..GetLootRollItemLink(3))
+	e(anchor, "CHAT_MSG_LOOT", "Bob passed on: "..GetLootRollItemLink(4))
 end)
 
 

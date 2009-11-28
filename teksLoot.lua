@@ -218,7 +218,7 @@ local function START_LOOT_ROLL(rollid, time)
 	f.need:SetText(0)
 	f.greed:SetText(0)
 	f.pass:SetText(0)
-	f.disenchant:SetText(0)
+	if THREETHREE then f.disenchant:SetText(0) end
 
 	local texture, name, count, quality, bop, canNeed, canGreed, canDisenchant = GetLootRollItemInfo(rollid)
 	f.button:SetNormalTexture(texture)

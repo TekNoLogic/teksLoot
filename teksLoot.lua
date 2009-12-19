@@ -264,6 +264,13 @@ local rollpairs = locale == "deDE" and {
 	["(.*) a pass\195\169 pour\194\160: (.+)"]  = "pass",
 	["(.*) a choisi Cupidit\195\169 pour\194\160: (.+)"] = "greed",
 	["(.*) a choisi Besoin pour\194\160: (.+)"]  = "need",
+}  or locale == "ruRU" and {
+	["(.*) автоматически передает предмет (.+), поскольку не может его забрать"] = "pass",
+	["(.*) пропускает розыгрыш предмета \"(.+)\", поскольку не может его забрать"] = "pass",
+	["(.*) отказывается от предмета (.+)%."]  = "pass",
+	["Разыгрывается: (.*)%. (.+): \"Не откажусь\""] = "greed",
+	["Разыгрывается: (.*)%. (.+): \"Мне это нужно\""] = "need",
+	["Разыгрывается: (.*)%. (.+): \"Распылить\""] = "disenchant",
 } or locale == "zhTW" and {
 	["^(.*) \232\135\170\229\139\149\232\168\173\229\174\154\231\130\186\230\148\190\230\163\132: (.+) \229\155\160\231\130\186\228\187\150/\229\165\185\228\184\141\232\131\189\230\139\191\229\143\150\232\169\178\231\137\169\229\147\129.$"] = "pass",
 	["^(.*) \230\148\190\230\163\132: (.+|r)$"]  = "pass",
@@ -277,8 +284,13 @@ local rollpairs = locale == "deDE" and {
 	["(.*) has selected Disenchant for: (.+)"]  = "disenchant",
 }
 local function ParseRollChoice(msg)
+	local _, playername, itemname
 	for i,v in pairs(rollpairs) do
-		local _, _, playername, itemname = string.find(msg, i)
+		if locale == "ruRU" and v ~= "pass"  then
+			_, _, itemname, playername = string.find(msg, i)
+		else
+			_, _, playername, itemname = string.find(msg, i)
+		end
 		if playername and itemname and playername ~= "Everyone" then return playername, itemname, v end
 	end
 end

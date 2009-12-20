@@ -3,10 +3,11 @@ local myname, ns = ...
 
 local locale = GetLocale()
 ns.rollpairs = locale == "deDE" and {
-	["(.*) passt automatisch bei (.+), weil er den Gegenstand nicht benutzen kann.$"]  = "pass",
+	["(.*) passt automatisch bei (.+), weil [ersi]+ den Gegenstand nicht benutzen kann.$"]  = "pass",
 	["(.*) würfelt nicht für: (.+|r)$"] = "pass",
 	["(.*) hat für (.+) 'Gier' ausgewählt"] = "greed",
 	["(.*) hat für (.+) 'Bedarf' ausgewählt"] = "need",
+	["(.*) hat für '(.+)' Entzauberung gewählt."]  = "disenchant",
 } or locale == "frFR" and {
 	["(.*) a passé pour : (.+) parce qu'((il)|(elle)) ne peut pas ramasser cette objet.$"]  = "pass",
 	["(.*) a passé pour : (.+)"]  = "pass",

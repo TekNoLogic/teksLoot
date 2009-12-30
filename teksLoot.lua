@@ -260,9 +260,11 @@ local function ParseRollChoice(msg)
 end
 
 
+local in_soviet_russia = (GetLocale() == "ruRU")
 local function CHAT_MSG_LOOT(msg)
 	local playername, itemname, rolltype = ParseRollChoice(msg)
 	if playername and itemname and rolltype then
+		if in_soviet_russia and rolltype ~= "pass" then itemname, playername = playername, itemname end
 		for _,f in ipairs(frames) do
 			if f.rollid and f.button.link == itemname and not f.rolls[playername] then
 				f.rolls[playername] = rolltype

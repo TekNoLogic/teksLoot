@@ -1,3 +1,12 @@
+3.3.0.9-Beta
+    In soviet russia addon localizes you!
+    deDE locale update for 3.3
+    Meh, textmate defaults to UTF8, we might as well actually use it
+    zhTW locale update
+    Move locale out into it's own file
+    Remove 3.2 backcompat
+    Up, down, what do we care?
+
 3.2.0.7-Beta
     Generate roll frames on demand, stupid default frames use 4 now
 

@@ -26,6 +26,12 @@ ns.rollpairs = locale == "deDE" and {
 	["(.*)選擇了貪婪優先:(.+)"] = "greed",
 	["(.*)選擇了需求優先:(.+)"] = "need",
 	["(.*)選擇分解:(.+)"] = "disenchant",
+} or locale == "koKR" and {
+	["(.*)님이 획득할 수 없는 획득할 수 없는 아이템이어서 자동으로 주사위 굴리기를 포기했습니다. (.*)$"] = "pass",
+	["(.*)님이 주사위 굴리기를 포기했습니다. (.*)$"]  = "pass",
+	["(.+)님이 차비를 선택했습니다. (.*)$"] = "greed",
+	["(.*)님이 입찰을 선택했습니다. (.*)$"]  = "need",
+	["(.*)님이 마력 추출을 선택했습니다. (.*)$"]  = "disenchant",
 } or {
 	["^(.*) automatically passed on: (.+) because s?he cannot loot that item.$"] = "pass",
 	["^(.*) passed on: (.+|r)$"]  = "pass",

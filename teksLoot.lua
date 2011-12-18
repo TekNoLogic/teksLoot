@@ -225,13 +225,35 @@ local function START_LOOT_ROLL(rollid, time)
 	f.button:SetNormalTexture(texture)
 	f.button.link = GetLootRollItemLink(rollid)
 
-	if canNeed then f.needbutt:Enable() else f.needbutt:Disable() end
-	if canGreed then f.greedbutt:Enable() else f.greedbutt:Disable() end
-	if canDisenchant then f.disenchantbutt:Enable() else f.disenchantbutt:Disable() end
-	SetDesaturation(f.needbutt:GetNormalTexture(), not canNeed)
-	SetDesaturation(f.greedbutt:GetNormalTexture(), not canGreed)
-	SetDesaturation(f.disenchantbutt:GetNormalTexture(), not canDisenchant)
+	if canNeed then
+		f.needbutt:Enable()
+		f.needbutt:SetAlpha(1.0)
+		SetDesaturation(f.needbutt:GetNormalTexture(), false)
+	else
+		f.needbutt:Disable()
+		f.needbutt:SetAlpha(0.35)
+		SetDesaturation(f.needbutt:GetNormalTexture(), true)
+	end
 
+	if canGreed then
+		f.greedbutt:Enable()
+		f.greedbutt:SetAlpha(1.0)
+		SetDesaturation(f.greedbutt:GetNormalTexture(), false)
+	else
+		f.greedbutt:Disable()
+		f.greedbutt:SetAlpha(0.35)
+		SetDesaturation(f.greedbutt:GetNormalTexture(), true)
+	end
+	
+	if canDisenchant then
+		f.disenchantbutt:Enable()
+		f.disenchantbutt:SetAlpha(1.0)
+		SetDesaturation(f.disenchantbutt:GetNormalTexture(), false)
+	else
+		f.disenchantbutt:Disable()
+		f.disenchantbutt:SetAlpha(0.35)
+		SetDesaturation(f.disenchantbutt:GetNormalTexture(), true)
+	end
 
 	f.fsbind:SetText(bop and "BoP" or "BoE")
 	f.fsbind:SetVertexColor(bop and 1 or .3, bop and .3 or 1, bop and .1 or .3)

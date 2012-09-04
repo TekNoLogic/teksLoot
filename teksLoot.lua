@@ -209,6 +209,27 @@ local function GetFrame()
 end
 
 
+local typemap = {[0] = 'pass', 'need', 'greed', 'disenchant'}
+local function UpdateRoll(i, rolltype)
+	local num = 0
+	local rollid, itemLink, numPlayers, isDone = C_LootHistory.GetItem(i)
+
+	if isDone or not numPlayers then return end
+
+	for j=1,numPlayers do
+		local name, class, thisrolltype = C_LootHistory.GetPlayerInfo(i, j)
+		if rolltype == thisrolltype then num = num + 1 end
+	end
+
+
+	for _,f in ipairs(frames) do
+		if f.rollid == rollid then
+			f[typemap[rolltype]]:SetText(num)
+			return
+		end
+	end
+end
+
 local function START_LOOT_ROLL(rollid, time)
 	if cancelled_rolls[rollid] then return end
 
@@ -252,27 +273,9 @@ local function START_LOOT_ROLL(rollid, time)
 end
 
 
-local function ParseRollChoice(msg)
-	for i,v in pairs(ns.rollpairs) do
-		local _, _, playername, itemname = string.find(msg, i)
-		if playername and itemname and playername ~= "Everyone" then return playername, itemname, v end
-	end
-end
-
-
-local in_soviet_russia = (GetLocale() == "ruRU")
-local function CHAT_MSG_LOOT(msg)
-	local playername, itemname, rolltype = ParseRollChoice(msg)
-	if playername and itemname and rolltype then
-		if in_soviet_russia and rolltype ~= "pass" then itemname, playername = playername, itemname end
-		for _,f in ipairs(frames) do
-			if f.rollid and f.button.link == itemname and not f.rolls[playername] then
-				f.rolls[playername] = rolltype
-				f[rolltype]:SetText(tonumber(f[rolltype]:GetText()) + 1)
-				return
-			end
-		end
-	end
+local function LOOT_HISTORY_ROLL_CHANGED(rollindex, playerindex)
+	local _, _, rolltype = C_LootHistory.GetPlayerInfo(rollindex, playerindex)
+	UpdateRoll(rollindex, rolltype)
 end
 
 
@@ -282,11 +285,14 @@ anchor:SetScript("OnEvent", function(frame, event, addon)
 
 	anchor:UnregisterEvent("ADDON_LOADED")
 	anchor:RegisterEvent("START_LOOT_ROLL")
-	anchor:RegisterEvent("CHAT_MSG_LOOT")
+	anchor:RegisterEvent("LOOT_HISTORY_ROLL_CHANGED")
 	UIParent:UnregisterEvent("START_LOOT_ROLL")
 	UIParent:UnregisterEvent("CANCEL_LOOT_ROLL")
 
-	anchor:SetScript("OnEvent", function(frame, event, ...) if event == "CHAT_MSG_LOOT" then return CHAT_MSG_LOOT(...) else return START_LOOT_ROLL(...) end end)
+	anchor:SetScript("OnEvent", function(frame, event, ...)
+		if event == "LOOT_HISTORY_ROLL_CHANGED" then return LOOT_HISTORY_ROLL_CHANGED(...)
+		else return START_LOOT_ROLL(...) end
+	end)
 
 
 	if not teksLootDB then teksLootDB = {} end

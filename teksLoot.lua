@@ -209,6 +209,13 @@ local function GetFrame()
 end
 
 
+local function FindFrame(rollid)
+	for _,f in ipairs(frames) do
+		if f.rollid == rollid then return f end
+	end
+end
+
+
 local typemap = {[0] = 'pass', 'need', 'greed', 'disenchant'}
 local function UpdateRoll(i, rolltype)
 	local num = 0
@@ -216,18 +223,15 @@ local function UpdateRoll(i, rolltype)
 
 	if isDone or not numPlayers then return end
 
+	local f = FindFrame(rollid)
+
 	for j=1,numPlayers do
 		local name, class, thisrolltype = C_LootHistory.GetPlayerInfo(i, j)
+		f.rolls[name] = typemap[thisrolltype]
 		if rolltype == thisrolltype then num = num + 1 end
 	end
 
-
-	for _,f in ipairs(frames) do
-		if f.rollid == rollid then
-			f[typemap[rolltype]]:SetText(num)
-			return
-		end
-	end
+	f[typemap[rolltype]]:SetText(num)
 end
 
 local function START_LOOT_ROLL(rollid, time)

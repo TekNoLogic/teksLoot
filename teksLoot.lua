@@ -22,7 +22,9 @@ local rolltypes = {"need", "greed", "disenchant", [0] = "pass"}
 local function SetTip(frame)
 	GameTooltip:SetOwner(frame, "ANCHOR_RIGHT")
 	GameTooltip:SetText(frame.tiptext)
-	if frame:IsEnabled() == 0 then GameTooltip:AddLine("|cffff3333Cannot roll") end
+	if not frame:IsEnabled() then
+		GameTooltip:AddLine("|cffff3333"..frame.errtext)
+	end
 	for name,roll in pairs(frame.parent.rolls) do if roll == rolltypes[frame.rolltype] then GameTooltip:AddLine(name, 1, 1, 1) end end
 	GameTooltip:Show()
 end
@@ -246,17 +248,42 @@ local function START_LOOT_ROLL(rollid, time)
 	f.pass:SetText(0)
 	f.disenchant:SetText(0)
 
-	local texture, name, count, quality, bop, canNeed, canGreed, canDisenchant = GetLootRollItemInfo(rollid)
+	local texture, name, count, quality, bop, canNeed, canGreed, canDisenchant, reasonNeed, reasonGreed, reasonDisenchant, deSkillRequired = GetLootRollItemInfo(rollid)
 	f.button:SetNormalTexture(texture)
 	f.button.link = GetLootRollItemLink(rollid)
 
-	if canNeed then f.needbutt:Enable() else f.needbutt:Disable() end
-	if canGreed then f.greedbutt:Enable() else f.greedbutt:Disable() end
-	if canDisenchant then f.disenchantbutt:Enable() else f.disenchantbutt:Disable() end
-	SetDesaturation(f.needbutt:GetNormalTexture(), not canNeed)
-	SetDesaturation(f.greedbutt:GetNormalTexture(), not canGreed)
-	SetDesaturation(f.disenchantbutt:GetNormalTexture(), not canDisenchant)
+	if canNeed then
+		f.needbutt:Enable()
+		f.needbutt:SetAlpha(1.0)
+		SetDesaturation(f.needbutt:GetNormalTexture(), false)
+	else
+		f.needbutt:Disable()
+		f.needbutt:SetAlpha(0.35)
+		SetDesaturation(f.needbutt:GetNormalTexture(), true)
+		f.needbutt.errtext = _G["LOOT_ROLL_INELIGIBLE_REASON"..reasonNeed]
+	end
 
+	if canGreed then
+		f.greedbutt:Enable()
+		f.greedbutt:SetAlpha(1.0)
+		SetDesaturation(f.greedbutt:GetNormalTexture(), false)
+	else
+		f.greedbutt:Disable()
+		f.greedbutt:SetAlpha(0.35)
+		SetDesaturation(f.greedbutt:GetNormalTexture(), true)
+		f.greedbutt.errtext = _G["LOOT_ROLL_INELIGIBLE_REASON"..reasonGreed]
+	end
+	
+	if canDisenchant then
+		f.disenchantbutt:Enable()
+		f.disenchantbutt:SetAlpha(1.0)
+		SetDesaturation(f.disenchantbutt:GetNormalTexture(), false)
+	else
+		f.disenchantbutt:Disable()
+		f.disenchantbutt:SetAlpha(0.35)
+		SetDesaturation(f.disenchantbutt:GetNormalTexture(), true)
+		f.disenchantbutt.errtext = format(_G["LOOT_ROLL_INELIGIBLE_REASON"..reasonDisenchant], deSkillRequired)
+	end
 
 	f.fsbind:SetText(bop and "BoP" or "BoE")
 	f.fsbind:SetVertexColor(bop and 1 or .3, bop and .3 or 1, bop and .1 or .3)

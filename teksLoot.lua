@@ -226,6 +226,7 @@ local function UpdateRoll(i, rolltype)
 	if isDone or not numPlayers then return end
 
 	local f = FindFrame(rollid)
+	if not f then return end
 
 	for j=1,numPlayers do
 		local name, class, thisrolltype = C_LootHistory.GetPlayerInfo(i, j)
@@ -273,7 +274,7 @@ local function START_LOOT_ROLL(rollid, time)
 		SetDesaturation(f.greedbutt:GetNormalTexture(), true)
 		f.greedbutt.errtext = _G["LOOT_ROLL_INELIGIBLE_REASON"..reasonGreed]
 	end
-	
+
 	if canDisenchant then
 		f.disenchantbutt:Enable()
 		f.disenchantbutt:SetAlpha(1.0)

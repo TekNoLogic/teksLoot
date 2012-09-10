@@ -1,3 +1,8 @@
+5.0.1.10-Beta
+    5.0 updates
+    Display the reason of why a roll type is disabled. (thanks LordJZ)
+    Set alpha channel to buttons when disabled (thanks LordJZ)
+
 3.3.0.9-Beta
     In soviet russia addon localizes you!
     deDE locale update for 3.3

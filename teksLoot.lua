@@ -10,7 +10,8 @@ local backdrop = {
 
 
 local function ClickRoll(frame)
-	RollOnLoot(frame.parent.rollid, frame.rolltype)
+	if IsShiftKeyDown() then ConfirmLootRoll(frame.parent.rollid, frame.rolltype)
+	else RollOnLoot(frame.parent.rollid, frame.rolltype) end
 end
 
 
@@ -26,6 +27,8 @@ local function SetTip(frame)
 		GameTooltip:AddLine("|cffff3333"..frame.errtext)
 	end
 	for name,roll in pairs(frame.parent.rolls) do if roll == rolltypes[frame.rolltype] then GameTooltip:AddLine(name, 1, 1, 1) end end
+	GameTooltip:AddLine('', 1, 1, 1)
+	GameTooltip:AddLine('Shift-click to bypass the confirm dialog', 1, 1, 1)
 	GameTooltip:Show()
 end
 

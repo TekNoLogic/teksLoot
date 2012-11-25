@@ -1,3 +1,6 @@
+5.0.1.11-Beta
+    Shift-click to bypass confirmation
+
 5.0.1.10-Beta
     5.0 updates
     Display the reason of why a roll type is disabled. (thanks LordJZ)
